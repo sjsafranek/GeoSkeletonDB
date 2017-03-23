@@ -5,7 +5,6 @@ import (
 	"log"
 	"math"
 	"os"
-	"sync"
 	"time"
 )
 
@@ -33,12 +32,6 @@ var (
 	COMMIT_LOG_FILE string = "geo_skeleton_commit.log"
 )
 
-// LayerCache keeps track of Database's loaded geojson layers
-type LayerCache struct {
-	Geojson *geojson.FeatureCollection
-	Time    time.Time
-}
-
 func NewGeoSkeletonDB(db_file string) Database {
 	var geoDb = Database{
 		File:  db_file,
@@ -52,8 +45,6 @@ func NewGeoSkeletonDB(db_file string) Database {
 type Database struct {
 	Table            string
 	File             string
-	Cache            map[string]*LayerCache
-	guard            sync.RWMutex
 	commit_log_queue chan string
 	Precision        int
 	DB               skeleton.Database
@@ -63,10 +54,7 @@ func (self Database) Init() {
 
 	// Set initial data precision
 	self.Precision = 8
-	// Start db caching
-	m := make(map[string]*LayerCache)
-	self.Cache = m
-	go self.cacheManager()
+
 	// start commit log
 	go self.startCommitLog()
 
@@ -139,16 +127,6 @@ func (self *Database) NewLayer() (string, error) {
 // @param geojs {Geojson}
 // @returns Error
 func (self *Database) InsertLayer(datasource_id string, geojs *geojson.FeatureCollection) error {
-	// Update caching layer
-	if v, ok := self.Cache[datasource_id]; ok {
-		self.guard.Lock()
-		v.Geojson = geojs
-		v.Time = time.Now()
-		self.guard.Unlock()
-	} else {
-		pgc := &LayerCache{Geojson: geojs, Time: time.Now()}
-		self.Cache[datasource_id] = pgc
-	}
 	// convert to bytes
 	value, err := geojs.MarshalJSON()
 	if err != nil {
@@ -167,14 +145,6 @@ func (self *Database) InsertLayer(datasource_id string, geojs *geojson.FeatureCo
 // @returns Geojson
 // @returns Error
 func (self *Database) GetLayer(datasource_id string) (*geojson.FeatureCollection, error) {
-	// Caching layer
-	if v, ok := self.Cache[datasource_id]; ok {
-		self.guard.RLock()
-		v.Time = time.Now()
-		self.guard.RUnlock()
-		return v.Geojson, nil
-	}
-	// If cache ds not found get from database
 	val, err := self.DB.Select(self.Table, datasource_id)
 	if err != nil {
 		return nil, err
@@ -187,9 +157,6 @@ func (self *Database) GetLayer(datasource_id string) (*geojson.FeatureCollection
 	if err != nil {
 		return geojs, err
 	}
-	// Store page in memory cache
-	pgc := &LayerCache{Geojson: geojs, Time: time.Now()}
-	self.Cache[datasource_id] = pgc
 	return geojs, nil
 }
 
@@ -198,12 +165,7 @@ func (self *Database) GetLayer(datasource_id string) (*geojson.FeatureCollection
 // @returns Error
 func (self *Database) DeleteLayer(datasource_id string) error {
 	self.commit_log_queue <- `{"method": "delete_layer", "data": { "datasource": "` + datasource_id + `"}}`
-
 	err := self.DB.Remove(datasource_id, self.Table)
-
-	self.guard.Lock()
-	delete(self.Cache, datasource_id)
-	self.guard.Unlock()
 	return err
 }
 
@@ -405,30 +367,4 @@ func (self *Database) EditFeature(datasource_id string, geo_id string, feat *geo
 		panic(err)
 	}
 	return err
-}
-
-// cacheManager for Database. Stores layers in memory.
-//		Unloads layers older than 90 sec
-//		When empty --> 60 sec timer
-//		When items in cache --> 15 sec timer
-func (self *Database) cacheManager() {
-	for {
-		n := float64(len(self.Cache))
-		if n != 0 {
-			for key := range self.Cache {
-				// CHECK AVAILABLE SYSTEM MEMORY
-				f := float64(len(self.Cache[key].Geojson.Features))
-				limit := (300.0 - (f * (f * 0.25))) - (n * 2.0)
-				if limit < 0.0 {
-					limit = 10.0
-				}
-				if time.Since(self.Cache[key].Time).Seconds() > limit {
-					self.guard.Lock()
-					delete(self.Cache, key)
-					self.guard.Unlock()
-				}
-			}
-		}
-		time.Sleep(10000 * time.Millisecond)
-	}
 }
