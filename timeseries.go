@@ -38,6 +38,6 @@ func update_timeseries_datasource(datasource_id string, value []byte) {
 	}
 
 	err = diffDb.Save(ddata.Name, enc)
-	fmt.Println(datasource_id, ddata.Name, err)
+	fmt.Println(string(datasource_id), ddata.Name, err)
 
 }
