@@ -407,10 +407,8 @@ func (self *Database) InsertTimeseriesDatasource(datasource_id string, ddata dif
 		panic(err)
 	}
 
+	// not matching ?!?!
 	ddata.Name = datasource_id
-	// if datasource_id != ddata.Name {
-	// 	panic("DATASOURCE IDS DO NOT MATCH")
-	// }
 
 	err = self.DB.Insert("GeoTimeseriesData", datasource_id, enc)
 	return err
@@ -424,10 +422,7 @@ func (self *Database) SelectTimeseriesDatasource(datasource_id string) (diff_sto
 }
 
 func (self *Database) UpdateTimeseriesDatasource(datasource_id string, value []byte) error {
-
-	update_value := string(value)
-
-	//var ddata diff_store.DiffStore
+	// get diffstore record
 	ddata, err := self.SelectTimeseriesDatasource(datasource_id)
 	if nil != err {
 		if err.Error() == "Not found" {
@@ -439,6 +434,7 @@ func (self *Database) UpdateTimeseriesDatasource(datasource_id string, value []b
 	}
 
 	// update diffstore
+	update_value := string(value)
 	ddata.Update(update_value)
 
 	// write to database
