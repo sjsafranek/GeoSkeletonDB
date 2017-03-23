@@ -407,10 +407,10 @@ func (self *Database) InsertTimeseriesDatasource(datasource_id string, ddata dif
 		panic(err)
 	}
 
-	//ddata.Name = datasource_id
-	if datasource_id != ddata.Name {
-		panic("DATASOURCE IDS DO NOT MATCH")
-	}
+	ddata.Name = datasource_id
+	// if datasource_id != ddata.Name {
+	// 	panic("DATASOURCE IDS DO NOT MATCH")
+	// }
 
 	err = self.DB.Insert("GeoTimeseriesData", datasource_id, enc)
 	return err
