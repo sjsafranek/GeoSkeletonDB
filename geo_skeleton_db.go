@@ -48,6 +48,8 @@ type Database struct {
 
 func (self Database) Init() {
 
+	self.DB.Init()
+
 	// Set initial data precision
 	self.Precision = 8
 
@@ -157,7 +159,7 @@ func (self *Database) GetLayer(datasource_id string) (*geojson.FeatureCollection
 }
 
 
-// GetLayer returns layer from database
+// GetLayers returns all datasource_ids from database
 // @param datasource {string}
 // @returns Geojson
 // @returns Error
@@ -166,14 +168,6 @@ func (self *Database) GetLayers() ([]string, error) {
 	if err != nil {
 		return nil, err
 	}
-	// if "" == string(val) {
-	// 	return nil, fmt.Errorf("Datasource not found")
-	// }
-	// // Read to struct
-	// geojs, err := geojson.UnmarshalFeatureCollection(val)
-	// if err != nil {
-	// 	return geojs, err
-	// }
 	return val, nil
 }
 
