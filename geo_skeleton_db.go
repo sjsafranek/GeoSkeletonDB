@@ -132,7 +132,7 @@ func (self *Database) InsertLayer(datasource_id string, geojs *geojson.FeatureCo
 	}
 
 	// store diffs
-	go update_timeseries_datasource(value)
+	go update_timeseries_datasource(datasource_id, value)
 
 	err = self.DB.Insert(self.Table, datasource_id, value)
 	if err != nil {
