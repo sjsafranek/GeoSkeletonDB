@@ -25,6 +25,7 @@ func RoundToPrecision(f float64, places int) float64 {
 
 // DB application Database
 var (
+	PRECISION        int = 0
 	COMMIT_LOG_FILE string = "geo_skeleton_commit.log"
 )
 
@@ -42,7 +43,7 @@ type Database struct {
 	Table            string
 	File             string
 	commit_log_queue chan string
-	Precision        int
+	// Precision        int
 	DB               skeleton.Database
 }
 
@@ -51,7 +52,7 @@ func (self Database) Init() {
 	self.DB.Init()
 
 	// Set initial data precision
-	self.Precision = 8
+	PRECISION = 8
 
 	// start commit log
 	go self.StartCommitLog()
@@ -195,14 +196,14 @@ func (self *Database) normalizeGeometry(feat *geojson.Feature) (*geojson.Feature
 
 	case geojson.GeometryPoint:
 		// []float64
-		feat.Geometry.Point[0] = RoundToPrecision(feat.Geometry.Point[0], self.Precision)
-		feat.Geometry.Point[1] = RoundToPrecision(feat.Geometry.Point[1], self.Precision)
+		feat.Geometry.Point[0] = RoundToPrecision(feat.Geometry.Point[0], PRECISION)
+		feat.Geometry.Point[1] = RoundToPrecision(feat.Geometry.Point[1], PRECISION)
 
 	case geojson.GeometryMultiPoint:
 		// [][]float64
 		for i := range feat.Geometry.MultiPoint {
 			for j := range feat.Geometry.MultiPoint[i] {
-				feat.Geometry.MultiPoint[i][j] = RoundToPrecision(feat.Geometry.MultiPoint[i][j], self.Precision)
+				feat.Geometry.MultiPoint[i][j] = RoundToPrecision(feat.Geometry.MultiPoint[i][j], PRECISION)
 			}
 		}
 
@@ -210,7 +211,7 @@ func (self *Database) normalizeGeometry(feat *geojson.Feature) (*geojson.Feature
 		// [][]float64
 		for i := range feat.Geometry.LineString {
 			for j := range feat.Geometry.LineString[i] {
-				feat.Geometry.LineString[i][j] = RoundToPrecision(feat.Geometry.LineString[i][j], self.Precision)
+				feat.Geometry.LineString[i][j] = RoundToPrecision(feat.Geometry.LineString[i][j], PRECISION)
 			}
 		}
 
@@ -219,7 +220,7 @@ func (self *Database) normalizeGeometry(feat *geojson.Feature) (*geojson.Feature
 		for i := range feat.Geometry.MultiLineString {
 			for j := range feat.Geometry.MultiLineString[i] {
 				for k := range feat.Geometry.MultiLineString[i][j] {
-					feat.Geometry.MultiLineString[i][j][k] = RoundToPrecision(feat.Geometry.MultiLineString[i][j][k], self.Precision)
+					feat.Geometry.MultiLineString[i][j][k] = RoundToPrecision(feat.Geometry.MultiLineString[i][j][k], PRECISION)
 				}
 			}
 		}
@@ -229,7 +230,7 @@ func (self *Database) normalizeGeometry(feat *geojson.Feature) (*geojson.Feature
 		for i := range feat.Geometry.Polygon {
 			for j := range feat.Geometry.Polygon[i] {
 				for k := range feat.Geometry.Polygon[i][j] {
-					feat.Geometry.Polygon[i][j][k] = RoundToPrecision(feat.Geometry.Polygon[i][j][k], self.Precision)
+					feat.Geometry.Polygon[i][j][k] = RoundToPrecision(feat.Geometry.Polygon[i][j][k], PRECISION)
 				}
 			}
 		}
