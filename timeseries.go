@@ -47,7 +47,7 @@ func (self GeoTimeseriesDB) Select(datasource_id string) ([]byte, error) {
 	return data, err
 }
 
-func (self GeoTimeseriesDB) UpdateTimeseriesDatasource(datasource_id string, value []byte) {
+func (self GeoTimeseriesDB) UpdateTimeseriesDatasource(datasource_id string, value []byte) error {
 
 	update_value := string(value)
 	var ddata diff_store.DiffStore
@@ -75,7 +75,15 @@ func (self GeoTimeseriesDB) UpdateTimeseriesDatasource(datasource_id string, val
 	ddata.Name = datasource_id
 	err = self.Insert(string(ddata.Name), enc)
 
-	if nil != err {
-		panic(err)
+	return err
+}
+
+func (self *Database) InsertLayer(datasource_id string, geojs *geojson.FeatureCollection) error {
+	// convert to bytes
+	value, err := geojs.MarshalJSON()
+	if err != nil {
+		return err
 	}
+	err = self.TS.UpdateTimeseriesDatasource(datasource_id, value)
+	return err
 }
