@@ -51,7 +51,7 @@ func (self GeoTimeseriesDB) UpdateTimeseriesDatasource(datasource_id string, val
 
 	update_value := string(value)
 	var ddata diff_store.DiffStore
-	data, err := GeoTsDB.Select(datasource_id)
+	data, err := self.Select(datasource_id)
 	if nil != err {
 		if err.Error() == "Not found" {
 			// create new diffstore if key not found in database
@@ -73,6 +73,9 @@ func (self GeoTimeseriesDB) UpdateTimeseriesDatasource(datasource_id string, val
 	}
 
 	ddata.Name = datasource_id
-	err = GeoTsDB.Insert(string(ddata.Name), enc)
+	err = self.Insert(string(ddata.Name), enc)
 
+	if nil != err {
+		panic(err)
+	}
 }
