@@ -3,7 +3,6 @@ package geo_skeleton
 import (
 	"fmt"
 	"log"
-	// "math"
 	"os"
 	"time"
 )
@@ -32,17 +31,8 @@ func NewGeoSkeletonDB(db_file string) Database {
 	return geoDb
 }
 
-// // Database struct for application.
-// type Database struct {
-// 	Table            string
-// 	File             string
-// 	commit_log_queue chan string
-// 	Precision        int
-// 	DB              skeleton.Database
-// }
-
 // Initialates database 
-func (self Database) Init() {
+func (self *Database) Init() {
 
 	self.DB.Init()
 
