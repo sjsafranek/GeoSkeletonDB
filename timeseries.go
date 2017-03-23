@@ -18,13 +18,13 @@ type GeoTimeseriesDB struct {
 }
 
 func (self GeoTimeseriesDB) Init() {
-	self.DB = skeleton.Database{File: self.getFile()}
+	self.DB = skeleton.Database{File: string(self.getFile())}
 	self.DB.Init()
 
 	conn := self.DB.Connect()
 	defer conn.Close()
 
-	err := self.DB.CreateTable(conn, self.getTable())
+	err := self.DB.CreateTable(conn, string(self.getTable()))
 	if nil != err {
 		panic(err)
 	}
@@ -34,14 +34,14 @@ func (self GeoTimeseriesDB) getFile() string {
 	if "" == self.File {
 		return "geo_ts.db"
 	}
-	return string(self.File)
+	return self.File
 }
 
 func (self GeoTimeseriesDB) getTable() string {
 	if "" == self.Table {
 		return "GeoTimeseriesData"
 	}
-	return string(self.Table)
+	return self.Table
 }
 
 func (self GeoTimeseriesDB) Insert(datasource_id string, enc []byte) (error) {
