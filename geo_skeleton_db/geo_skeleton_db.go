@@ -30,7 +30,7 @@ func RoundToPrecision(f float64, places int) float64 {
 
 // DB application Database
 var (
-	COMMIT_LOG_FILE string = "commit.log"
+	COMMIT_LOG_FILE string = "geo_skeleton_commit.log"
 )
 
 // LayerCache keeps track of Database's loaded geojson layers
@@ -42,7 +42,7 @@ type LayerCache struct {
 func NewGeoSkeletonDB(db_file string) Database {
 	var geoDb = Database{
 		File:  db_file,
-		Table: "GeoJSONLayers",
+		Table: "GeoJsonDatasources",
 		DB:    skeleton.Database{File: db_file}}
 	geoDb.Init()
 	return geoDb
@@ -106,10 +106,6 @@ func (self *Database) startCommitLog() {
 	}
 }
 
-func (self Database) getBucketName() []byte {
-	return []byte(self.Table)
-}
-
 // CommitQueueLength returns length of database commit_log_queue
 // @returns int
 func (self *Database) CommitQueueLength() int {
@@ -131,7 +127,7 @@ func (self *Database) NewLayer() (string, error) {
 	}
 	self.commit_log_queue <- `{"method": "create_datasource", "data": { "datasource": "` + datasource_id + `", "layer": ` + string(value) + `}}`
 	// Insert layer into database
-	err = self.DB.Insert("layers", datasource_id, value)
+	err = self.DB.Insert(self.Table, datasource_id, value)
 	if err != nil {
 		panic(err)
 	}
@@ -158,7 +154,7 @@ func (self *Database) InsertLayer(datasource_id string, geojs *geojson.FeatureCo
 	if err != nil {
 		return err
 	}
-	err = self.DB.Insert("layers", datasource_id, value)
+	err = self.DB.Insert(self.Table, datasource_id, value)
 	if err != nil {
 		panic(err)
 	}
@@ -179,7 +175,7 @@ func (self *Database) GetLayer(datasource_id string) (*geojson.FeatureCollection
 		return v.Geojson, nil
 	}
 	// If cache ds not found get from database
-	val, err := self.DB.Select("layers", datasource_id)
+	val, err := self.DB.Select(self.Table, datasource_id)
 	if err != nil {
 		return nil, err
 	}
