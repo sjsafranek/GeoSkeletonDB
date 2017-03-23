@@ -4,13 +4,21 @@ import "github.com/paulmach/go.geojson"
 import "github.com/sjsafranek/DiffDB/diff_store"
 import "github.com/sjsafranek/SkeletonDB"
 
+var GeoTsDB GeoTimeseriesDB
+
+func init() {
+	GeoTsDB GeoTimeseriesDB{}
+	GeoTsDB.Init
+}
+
+
 type GeoTimeseriesDB struct {
 	File string
 	Table    string
 	DB       skeleton.Database
 }
 
-func (self GeoTimeseriesDB) Init() {
+func (self *GeoTimeseriesDB) Init() {
 
 	self.DB = skeleton.Database{File: string(self.getFile())}
 	self.DB.Init()
@@ -24,31 +32,31 @@ func (self GeoTimeseriesDB) Init() {
 	}
 }
 
-func (self GeoTimeseriesDB) getFile() string {
+func (self *GeoTimeseriesDB) getFile() string {
 	if "" == self.File {
 		return "geo_ts.db"
 	}
 	return self.File
 }
 
-func (self GeoTimeseriesDB) getTable() string {
+func (self *GeoTimeseriesDB) getTable() string {
 	if "" == self.Table {
 		return "GeoTimeseriesData"
 	}
 	return self.Table
 }
 
-func (self GeoTimeseriesDB) Insert(datasource_id string, enc []byte) (error) {
+func (self *GeoTimeseriesDB) Insert(datasource_id string, enc []byte) (error) {
 	err := self.DB.Insert(self.getTable(), datasource_id, enc)
 	return err
 }
 
-func (self GeoTimeseriesDB) Select(datasource_id string) ([]byte, error) {
+func (self *GeoTimeseriesDB) Select(datasource_id string) ([]byte, error) {
 	data, err := self.DB.Select(self.getTable(), datasource_id)
 	return data, err
 }
 
-func (self GeoTimeseriesDB) UpdateTimeseriesDatasource(datasource_id string, value []byte) error {
+func (self *GeoTimeseriesDB) UpdateTimeseriesDatasource(datasource_id string, value []byte) error {
 
 	update_value := string(value)
 	var ddata diff_store.DiffStore

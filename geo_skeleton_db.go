@@ -69,6 +69,11 @@ func (self Database) Init() {
 	if nil != err {
 		panic(err)
 	}
+
+	err := self.DB.CreateTable(conn, "GeoTimeseriesData")
+	if nil != err {
+		panic(err)
+	}
 }
 
 func (self Database) getPrecision() int {
