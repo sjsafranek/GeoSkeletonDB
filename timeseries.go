@@ -20,9 +20,6 @@ type GeoTimeseriesDB struct {
 }
 
 func (self GeoTimeseriesDB) Init() {
-
-	fmt.Println(self.getFile())
-
 	self.DB = skeleton.Database{File: self.getFile()}
 	self.DB.Init()
 
@@ -55,6 +52,9 @@ func (self GeoTimeseriesDB) Insert(datasource_id string, enc []byte) (error) {
 }
 
 func (self GeoTimeseriesDB) Select(datasource_id string) ([]byte, error) {
+
+	fmt.Println(self.getTable())
+
 	data, err := self.DB.Select(self.getTable(), datasource_id)
 	return data, err
 }
