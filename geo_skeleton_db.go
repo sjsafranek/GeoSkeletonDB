@@ -409,7 +409,7 @@ func (self *Database) SelectTimeseriesDatasource(datasource_id string) (diff_sto
 	var ddata diff_store.DiffStore
 	data, err := self.DB.Select("GeoTimeseriesData", datasource_id)
 	ddata.Decode(data)
-	return data, err
+	return ddata, err
 }
 
 func (self *Database) UpdateTimeseriesDatasource(datasource_id string, value []byte) error {
