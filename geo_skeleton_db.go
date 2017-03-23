@@ -405,16 +405,19 @@ func (self *Database) InsertTimeseriesDatasource(datasource_id string, enc []byt
 	return err
 }
 
-func (self *Database) SelectTimeseriesDatasource(datasource_id string) ([]byte, error) {
+func (self *Database) SelectTimeseriesDatasource(datasource_id string) (diff_store.DiffStore, error) {
+	var ddata diff_store.DiffStore
 	data, err := self.DB.Select("GeoTimeseriesData", datasource_id)
+	ddata.Decode(data)
 	return data, err
 }
 
 func (self *Database) UpdateTimeseriesDatasource(datasource_id string, value []byte) error {
 
 	update_value := string(value)
-	var ddata diff_store.DiffStore
-	data, err := self.SelectTimeseriesDatasource(datasource_id)
+
+	//var ddata diff_store.DiffStore
+	ddata, err := self.SelectTimeseriesDatasource(datasource_id)
 	if nil != err {
 		if err.Error() == "Not found" {
 			// create new diffstore if key not found in database
@@ -422,8 +425,6 @@ func (self *Database) UpdateTimeseriesDatasource(datasource_id string, value []b
 		} else {
 			panic(err)
 		}
-	} else {
-		ddata.Decode(data)
 	}
 
 	// update diffstore
