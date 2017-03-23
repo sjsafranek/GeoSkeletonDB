@@ -7,6 +7,7 @@ var diffDb diff_db.DiffDb
 
 func init() {
 	diffDb = diff_db.NewDiffDb("diff.db")
+	diffDb.Init()
 }
 
 func update_timeseries_datasource(datasource_id string, value []byte) {
