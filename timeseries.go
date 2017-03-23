@@ -43,6 +43,7 @@ func (self GeoTimeseriesDB) getTable() string {
 	if "" == self.Table {
 		return "GeoTimeseriesData"
 	}
+	return string(self.Table)
 }
 
 func (self GeoTimeseriesDB) Insert(datasource_id string, enc []byte) (error) {
