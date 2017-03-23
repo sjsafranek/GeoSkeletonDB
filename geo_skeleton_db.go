@@ -45,9 +45,13 @@ type Database struct {
 	commit_log_queue chan string
 	// Precision        int
 	DB               skeleton.Database
+	TS 				GeoTimeseriesDB
 }
 
 func (self Database) Init() {
+
+	self.TS := GeoTimeseriesDB{}
+	self.TS.Init()
 
 	self.DB.Init()
 
@@ -132,8 +136,7 @@ func (self *Database) InsertLayer(datasource_id string, geojs *geojson.FeatureCo
 		return err
 	}
 
-	// store diffs
-	go update_timeseries_datasource(datasource_id, value)
+	go self.TS.UpdateTimeseriesDatasource(datasource_id, value)
 
 	err = self.DB.Insert(self.Table, datasource_id, value)
 	if err != nil {

@@ -1,19 +1,7 @@
 package geo_skeleton
 
-import "fmt"
-
 import "github.com/sjsafranek/DiffDB/diff_store"
 import "github.com/sjsafranek/SkeletonDB"
-// import "github.com/sjsafranek/DiffDB/diff_db"
-
-// var GeoTsDB GeoTimeseriesDB
-
-/*
-func init() {
-	GeoTsDB = GeoTimeseriesDB{}
-	GeoTsDB.Init()
-}
-*/
 
 type GeoTimeseriesDB struct {
 	File string
@@ -22,8 +10,6 @@ type GeoTimeseriesDB struct {
 }
 
 func (self GeoTimeseriesDB) Init() {
-
-	fmt.Println("[GEOTS]", string(self.getFile()), string(self.getTable()))
 
 	self.DB = skeleton.Database{File: string(self.getFile())}
 	self.DB.Init()
@@ -61,10 +47,7 @@ func (self GeoTimeseriesDB) Select(datasource_id string) ([]byte, error) {
 	return data, err
 }
 
-func update_timeseries_datasource(datasource_id string, value []byte) {
-
-	GeoTsDB := GeoTimeseriesDB{}
-	GeoTsDB.Init()
+func func (self GeoTimeseriesDB) UpdateTimeseriesDatasource(datasource_id string, value []byte) {
 
 	update_value := string(value)
 	var ddata diff_store.DiffStore
