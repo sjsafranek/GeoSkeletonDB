@@ -7,7 +7,7 @@ import "github.com/sjsafranek/SkeletonDB"
 var GeoTsDB GeoTimeseriesDB
 
 func init() {
-	GeoTsDB GeoTimeseriesDB{}
+	GeoTsDB = GeoTimeseriesDB{}
 	GeoTsDB.Init
 }
 

@@ -70,7 +70,7 @@ func (self Database) Init() {
 		panic(err)
 	}
 
-	err := self.DB.CreateTable(conn, "GeoTimeseriesData")
+	err = self.DB.CreateTable(conn, "GeoTimeseriesData")
 	if nil != err {
 		panic(err)
 	}
