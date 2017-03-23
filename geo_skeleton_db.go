@@ -395,17 +395,17 @@ func (self *Database) EditFeature(datasource_id string, geo_id string, feat *geo
 }
 
 
-func (self GeoTimeseriesDB) InsertTimeseriesDatasource(datasource_id string, enc []byte) (error) {
+func (self *Database) InsertTimeseriesDatasource(datasource_id string, enc []byte) (error) {
 	err := self.DB.Insert("GeoTimeseriesData", datasource_id, enc)
 	return err
 }
 
-func (self Database) SelectTimeseriesDatasource(datasource_id string) ([]byte, error) {
+func (self *Database) SelectTimeseriesDatasource(datasource_id string) ([]byte, error) {
 	data, err := self.DB.Select("GeoTimeseriesData", datasource_id)
 	return data, err
 }
 
-func (self Database) UpdateTimeseriesDatasource(datasource_id string, value []byte) error {
+func (self *Database) UpdateTimeseriesDatasource(datasource_id string, value []byte) error {
 
 	update_value := string(value)
 	var ddata diff_store.DiffStore
