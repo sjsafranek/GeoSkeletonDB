@@ -1,5 +1,6 @@
 package geo_skeleton
 
+import "github.com/paulmach/go.geojson"
 import "github.com/sjsafranek/DiffDB/diff_store"
 import "github.com/sjsafranek/SkeletonDB"
 
@@ -84,6 +85,6 @@ func (self *GeoTimeseriesDB) InsertLayer(datasource_id string, geojs *geojson.Fe
 	if err != nil {
 		return err
 	}
-	err = self.TS.UpdateTimeseriesDatasource(datasource_id, value)
+	err = self.UpdateTimeseriesDatasource(datasource_id, value)
 	return err
 }
