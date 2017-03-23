@@ -1,4 +1,6 @@
-	package geo_skeleton
+package geo_skeleton
+
+import "fmt"
 
 import "github.com/sjsafranek/DiffDB/diff_store"
 import "github.com/sjsafranek/SkeletonDB"
@@ -18,6 +20,9 @@ type GeoTimeseriesDB struct {
 }
 
 func (self GeoTimeseriesDB) Init() {
+
+	fmt.Println(self.getFile())
+
 	self.DB = skeleton.Database{File: self.getFile()}
 	self.DB.Init()
 
