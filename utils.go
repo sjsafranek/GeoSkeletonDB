@@ -46,35 +46,6 @@ func NewUUID2() (string, error) {
 	return fmt.Sprintf("%x-%x-%x-%x-%x", b[0:4], b[4:6], b[6:8], b[8:10], b[10:]), nil
 }
 
-// NewAPIKey generates and returns an apikey of desired length.
-func NewAPIKey(n int) string {
-	s := ""
-	for i := 1; i <= n; i++ {
-		s += string(_letters[rand.Intn(len(_letters))])
-	}
-	return s
-}
-
-// StringInSlice loops through a []string and returns a bool if string is found.
-func StringInSlice(a string, list []string) bool {
-	for _, b := range list {
-		if b == a {
-			return true
-		}
-	}
-	return false
-}
-
-// SliceIndex loops through a []string and returns the index of a string.
-func SliceIndex(value string, slice []string) int {
-	for p, v := range slice {
-		if v == value {
-			return p
-		}
-	}
-	return -1
-}
-
 // CompressByte
 func CompressByte(src []byte) []byte {
 	compressedData := new(bytes.Buffer)
