@@ -54,7 +54,7 @@ func (self Database) Init() {
 	self.Precision = 8
 
 	// start commit log
-	go self.startCommitLog()
+	go self.StartCommitLog()
 
 	// default table
 	if "" == self.Table {
@@ -71,7 +71,7 @@ func (self Database) Init() {
 }
 
 // Starts Database commit log
-func (self *Database) startCommitLog() {
+func (self *Database) StartCommitLog() {
 	self.commit_log_queue = make(chan string, 10000)
 	// open file to write database commit log
 	COMMIT_LOG, err := os.OpenFile(COMMIT_LOG_FILE, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
