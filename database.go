@@ -18,20 +18,21 @@ var (
 )
 
 const (
-	DEFAULT_PRECISION        int = 8
+	DEFAULT_PRECISION      int    = 8
+	DEFAULT_DATABASE_TABLE string = "GeoJsonDatasources"
 )
 
 // Creates a GeoSkeletonDB
 func NewGeoSkeletonDB(db_file string) Database {
 	var geoDb = Database{
 		File:  db_file,
-		Table: "GeoJsonDatasources",
+		Table: DEFAULT_DATABASE_TABLE,
 		DB:    skeleton.Database{File: db_file}}
 	geoDb.Init()
 	return geoDb
 }
 
-// Initialates database 
+// Initialates database
 func (self *Database) Init() {
 
 	self.DB.Init()
@@ -40,14 +41,14 @@ func (self *Database) Init() {
 	go self.StartCommitLog()
 
 	// default table
-	if "" == self.Table {
-		self.Table = "GeoJSONLayers"
-	}
+	//if "" == self.Table {
+	//	self.Table = DEFAULT_DATABASE_TABLE
+	//}
 
 	conn := self.DB.Connect()
 	defer conn.Close()
 
-	err := self.DB.CreateTable(conn, self.Table)
+	err := self.DB.CreateTable(conn, self.getTable())
 	if nil != err {
 		panic(err)
 	}
@@ -58,8 +59,16 @@ func (self *Database) Init() {
 	}
 }
 
-// Get precisions for rounding latitude longitude values
-func (self Database) getPrecision() int {
+// Get database table
+func (self *Database) getTable() string {
+	if "" == self.Table {
+		return DEFAULT_DATABASE_TABLE
+	}
+	return self.Table
+}
+
+// Get precision for rounding latitude longitude values
+func (self *Database) getPrecision() int {
 	if 1 > self.Precision {
 		return DEFAULT_PRECISION
 	}
@@ -107,7 +116,7 @@ func (self *Database) NewLayer() (string, error) {
 	}
 	self.commit_log_queue <- `{"method": "create_datasource", "data": { "datasource": "` + datasource_id + `", "layer": ` + string(value) + `}}`
 	// Insert layer into database
-	err = self.DB.Insert(self.Table, datasource_id, value)
+	err = self.DB.Insert(self.getTable(), datasource_id, value)
 	if err != nil {
 		panic(err)
 	}
@@ -123,7 +132,7 @@ func (self *Database) InsertLayer(datasource_id string, geojs *geojson.FeatureCo
 		return err
 	}
 
-	err = self.DB.Insert(self.Table, datasource_id, value)
+	err = self.DB.Insert(self.getTable(), datasource_id, value)
 	if err != nil {
 		panic(err)
 	}
@@ -136,7 +145,7 @@ func (self *Database) InsertLayer(datasource_id string, geojs *geojson.FeatureCo
 // GetLayer returns geojson layer from database
 // TODO: Switch to timeseries datasource
 func (self *Database) GetLayer(datasource_id string) (*geojson.FeatureCollection, error) {
-	val, err := self.DB.Select(self.Table, datasource_id)
+	val, err := self.DB.Select(self.getTable(), datasource_id)
 	if err != nil {
 		return nil, err
 	}
@@ -153,7 +162,7 @@ func (self *Database) GetLayer(datasource_id string) (*geojson.FeatureCollection
 
 // GetLayers returns all datasource_ids from database
 func (self *Database) GetLayers() ([]string, error) {
-	val, err := self.DB.SelectAll(self.Table)
+	val, err := self.DB.SelectAll(self.getTable())
 	if err != nil {
 		return nil, err
 	}
@@ -163,7 +172,7 @@ func (self *Database) GetLayers() ([]string, error) {
 // DeleteLayer deletes geojson layer from database
 func (self *Database) DeleteLayer(datasource_id string) error {
 	self.commit_log_queue <- `{"method": "delete_layer", "data": { "datasource": "` + datasource_id + `"}}`
-	err := self.DB.Remove(datasource_id, self.Table)
+	err := self.DB.Remove(datasource_id, self.getTable())
 	return err
 }
 
@@ -320,7 +329,7 @@ func (self *Database) InsertFeature(datasource_id string, feat *geojson.Feature)
 	return err
 }
 
-// EditFeature edits geojson feature within geojson layer. 
+// EditFeature edits geojson feature within geojson layer.
 // Updates geojson layer in Database
 func (self *Database) EditFeature(datasource_id string, geo_id string, feat *geojson.Feature) error {
 
@@ -368,7 +377,7 @@ func (self *Database) EditFeature(datasource_id string, geo_id string, feat *geo
 }
 
 // InsertTimeseriesDatasource inserts timeseries geojson layer to database
-func (self *Database) InsertTimeseriesDatasource(datasource_id string, ddata diff_store.DiffStore) (error) {
+func (self *Database) InsertTimeseriesDatasource(datasource_id string, ddata diff_store.DiffStore) error {
 	// save to database
 	enc, err := ddata.Encode()
 	if nil != err {

@@ -8,5 +8,5 @@ type Database struct {
 	File             string
 	commit_log_queue chan string
 	Precision        int
-	DB              skeleton.Database
+	DB               skeleton.Database
 }
