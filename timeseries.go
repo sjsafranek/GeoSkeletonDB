@@ -8,10 +8,12 @@ import "github.com/sjsafranek/SkeletonDB"
 
 var GeoTsDB GeoTimeseriesDB
 
+/*
 func init() {
 	GeoTsDB = GeoTimeseriesDB{}
 	GeoTsDB.Init()
 }
+*/
 
 type GeoTimeseriesDB struct {
 	File string
