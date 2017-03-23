@@ -9,10 +9,6 @@ import (
 )
 
 import (
-	"./utils"
-)
-
-import (
 	"github.com/paulmach/go.geojson"
 	"github.com/sjsafranek/SkeletonDB"
 )
@@ -106,7 +102,7 @@ func (self *Database) CommitQueueLength() int {
 // TODO: RENAME TO NewDatasource
 func (self *Database) NewLayer() (string, error) {
 	// create geojson
-	datasource_id, _ := utils.NewUUID()
+	datasource_id, _ := NewUUID()
 	geojs := geojson.NewFeatureCollection()
 	// convert to bytes
 	value, err := geojs.MarshalJSON()
