@@ -19,7 +19,7 @@ type GeoTimeseriesDB struct {
 
 func (self GeoTimeseriesDB) Init() {
 
-	self.DB = skeleton.Database{File: self.getFile()}}
+	self.DB = skeleton.Database{File: self.getFile()}
 	self.DB.Init()
 
 	conn := self.DB.Connect()
