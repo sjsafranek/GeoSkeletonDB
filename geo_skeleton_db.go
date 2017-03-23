@@ -50,7 +50,7 @@ type Database struct {
 
 func (self Database) Init() {
 
-	self.TS := GeoTimeseriesDB{}
+	self.TS = GeoTimeseriesDB{}
 	self.TS.Init()
 
 	self.DB.Init()
