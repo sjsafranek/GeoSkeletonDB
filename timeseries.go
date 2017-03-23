@@ -45,9 +45,9 @@ func (self GeoTimeseriesDB) getTable() string {
 	return self.Table
 }
 
-func (self GeoTimeseriesDB) Insert(datasource_id string, enc []byte) ([]byte, error) {
-	data, err := self.DB.Insert(self.getTable(), datasource_id, enc)
-	return data, err
+func (self GeoTimeseriesDB) Insert(datasource_id string, enc []byte) (error) {
+	err := self.DB.Insert(self.getTable(), datasource_id, enc)
+	return err
 }
 
 func (self GeoTimeseriesDB) Select(datasource_id string) ([]byte, error) {
