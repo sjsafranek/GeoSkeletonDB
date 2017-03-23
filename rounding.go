@@ -1,5 +1,7 @@
 package geo_skeleton
 
+import "math"
+
 // Rounds float64.
 // Source: https://gist.github.com/DavidVaini/10308388
 func Round(f float64) float64 {

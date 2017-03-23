@@ -3,7 +3,7 @@ package geo_skeleton
 import (
 	"fmt"
 	"log"
-	"math"
+	// "math"
 	"os"
 	"time"
 )
