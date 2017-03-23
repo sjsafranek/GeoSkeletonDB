@@ -6,7 +6,7 @@ import "github.com/sjsafranek/DiffDB/diff_store"
 import "github.com/sjsafranek/SkeletonDB"
 // import "github.com/sjsafranek/DiffDB/diff_db"
 
-var GeoTsDB GeoTimeseriesDB
+// var GeoTsDB GeoTimeseriesDB
 
 /*
 func init() {
@@ -63,7 +63,7 @@ func (self GeoTimeseriesDB) Select(datasource_id string) ([]byte, error) {
 
 func update_timeseries_datasource(datasource_id string, value []byte) {
 
-	GeoTsDB = GeoTimeseriesDB{}
+	GeoTsDB := GeoTimeseriesDB{}
 	GeoTsDB.Init()
 
 	update_value := string(value)
