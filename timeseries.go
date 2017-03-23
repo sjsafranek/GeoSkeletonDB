@@ -14,8 +14,6 @@ func init() {
 
 func update_timeseries_datasource(datasource_id string, value []byte) {
 
-	fmt.Println("TESTINGING !@#$")
-
 	update_value := string(value)
 	var ddata diff_store.DiffStore
 	data, err := diffDb.Load(datasource_id)
@@ -38,6 +36,8 @@ func update_timeseries_datasource(datasource_id string, value []byte) {
 	if nil != err {
 		panic(err)
 	}
+
+	fmt.Println(enc)
 
 	diffDb.Save(ddata.Name, enc)
 }
