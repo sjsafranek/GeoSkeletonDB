@@ -400,7 +400,18 @@ func (self *Database) EditFeature(datasource_id string, geo_id string, feat *geo
 }
 
 
-func (self *Database) InsertTimeseriesDatasource(datasource_id string, enc []byte) (error) {
+func (self *Database) InsertTimeseriesDatasource(datasource_id string, ddata diff_store.DiffStore) (error) {
+	// save to database
+	enc, err := ddata.Encode()
+	if nil != err {
+		panic(err)
+	}
+	
+	//ddata.Name = datasource_id
+	if datasource_id != ddata.Name {
+		panic("DATASOURCE IDS DO NOT MATCH")
+	}
+
 	err := self.DB.Insert("GeoTimeseriesData", datasource_id, enc)
 	return err
 }
@@ -430,14 +441,7 @@ func (self *Database) UpdateTimeseriesDatasource(datasource_id string, value []b
 	// update diffstore
 	ddata.Update(update_value)
 
-	// save to database
-	enc, err := ddata.Encode()
-	if nil != err {
-		panic(err)
-	}
-
-	ddata.Name = datasource_id
-	err = self.InsertTimeseriesDatasource(string(ddata.Name), enc)
-
+	// write to database
+	err = self.InsertTimeseriesDatasource(datasource_id, ddata)
 	return err
 }
