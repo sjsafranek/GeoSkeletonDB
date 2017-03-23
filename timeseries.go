@@ -33,14 +33,14 @@ func (self GeoTimeseriesDB) Init() {
 
 func (self GeoTimeseriesDB) getFile() {
 	if "" == self.File {
-		return = "diff.db"
+		return = "geo_ts.db"
 	}
 	return self.File
 }
 
 func (self GeoTimeseriesDB) getTable() {
 	if "" == self.Table {
-		return = "DiffData"
+		return = "GeoTimeseriesData"
 	}
 	return self.Table
 }
