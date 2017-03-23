@@ -23,15 +23,19 @@ const (
 )
 
 // https://gist.github.com/DavidVaini/10308388
+
+// Rounds float64
 func Round(f float64) float64 {
 	return math.Floor(f + .5)
 }
 
+// Rounds float64 to specified decimal precision
 func RoundToPrecision(f float64, places int) float64 {
 	shift := math.Pow(10, float64(places))
 	return Round(f*shift) / shift
 }
 
+// Creates a GeoSkeletonDB
 func NewGeoSkeletonDB(db_file string) Database {
 	var geoDb = Database{
 		File:  db_file,
@@ -41,7 +45,7 @@ func NewGeoSkeletonDB(db_file string) Database {
 	return geoDb
 }
 
-// Database strust for application.
+// Database struct for application.
 type Database struct {
 	Table            string
 	File             string
@@ -50,6 +54,7 @@ type Database struct {
 	DB              skeleton.Database
 }
 
+// Initialates database 
 func (self Database) Init() {
 
 	self.DB.Init()
@@ -76,6 +81,7 @@ func (self Database) Init() {
 	}
 }
 
+// Get precisions for rounding latitude longitude values
 func (self Database) getPrecision() int {
 	if 1 > self.Precision {
 		return DEFAULT_PRECISION
@@ -106,14 +112,12 @@ func (self *Database) StartCommitLog() {
 }
 
 // CommitQueueLength returns length of database commit_log_queue
-// @returns int
 func (self *Database) CommitQueueLength() int {
 	return len(self.commit_log_queue)
 }
 
-// NewLayer creates new datasource layer
-// @returns string - datasource id
-// @returns Error
+// NewLayer creates new geojson layer
+// Writes new layer to database
 // TODO: RENAME TO NewDatasource
 func (self *Database) NewLayer() (string, error) {
 	// create geojson
@@ -133,10 +137,8 @@ func (self *Database) NewLayer() (string, error) {
 	return datasource_id, err
 }
 
-// InsertLayer inserts layer into database
-// @param datasource {string}
-// @param geojs {Geojson}
-// @returns Error
+// InsertLayer inserts geojson layer into database
+// TODO: Switch to timeseries datasource
 func (self *Database) InsertLayer(datasource_id string, geojs *geojson.FeatureCollection) error {
 	// convert to bytes
 	value, err := geojs.MarshalJSON()
@@ -154,10 +156,8 @@ func (self *Database) InsertLayer(datasource_id string, geojs *geojson.FeatureCo
 	return err
 }
 
-// GetLayer returns layer from database
-// @param datasource {string}
-// @returns Geojson
-// @returns Error
+// GetLayer returns geojson layer from database
+// TODO: Switch to timeseries datasource
 func (self *Database) GetLayer(datasource_id string) (*geojson.FeatureCollection, error) {
 	val, err := self.DB.Select(self.Table, datasource_id)
 	if err != nil {
@@ -174,11 +174,7 @@ func (self *Database) GetLayer(datasource_id string) (*geojson.FeatureCollection
 	return geojs, nil
 }
 
-
 // GetLayers returns all datasource_ids from database
-// @param datasource {string}
-// @returns Geojson
-// @returns Error
 func (self *Database) GetLayers() ([]string, error) {
 	val, err := self.DB.SelectAll(self.Table)
 	if err != nil {
@@ -187,16 +183,14 @@ func (self *Database) GetLayers() ([]string, error) {
 	return val, nil
 }
 
-
-// DeleteLayer deletes layer from database
-// @param datasource {string}
-// @returns Error
+// DeleteLayer deletes geojson layer from database
 func (self *Database) DeleteLayer(datasource_id string) error {
 	self.commit_log_queue <- `{"method": "delete_layer", "data": { "datasource": "` + datasource_id + `"}}`
 	err := self.DB.Remove(datasource_id, self.Table)
 	return err
 }
 
+// Normalizes geometroy to set decimal precision
 func (self *Database) normalizeGeometry(feat *geojson.Feature) (*geojson.Feature, error) {
 	// FIT TO 7 - 8 DECIMAL PLACES OF PRECISION
 	if nil == feat.Geometry {
@@ -265,6 +259,8 @@ func (self *Database) normalizeGeometry(feat *geojson.Feature) (*geojson.Feature
 	return feat, nil
 }
 
+// Normalizes properties within geojson layer using geojson feature
+// Normalizes properties within geojson feature using geojson layers
 func (self *Database) normalizeProperties(feat *geojson.Feature, featCollection *geojson.FeatureCollection) *geojson.Feature {
 
 	// check if nil map
@@ -294,10 +290,8 @@ func (self *Database) normalizeProperties(feat *geojson.Feature, featCollection 
 	return feat
 }
 
-// InsertFeature adds feature to layer. Updates layer in Database
-// @param datasource {string}
-// @param feat {Geojson Feature}
-// @returns Error
+// InsertFeature adds geojson feature to geojson layer.
+// Updates layer in database
 func (self *Database) InsertFeature(datasource_id string, feat *geojson.Feature) error {
 
 	if nil == feat {
@@ -349,11 +343,8 @@ func (self *Database) InsertFeature(datasource_id string, feat *geojson.Feature)
 	return err
 }
 
-// EditFeature Edits feature in layer. Updates layer in Database
-// @param datasource {string}
-// @param geo_id {string}
-// @param feat {Geojson Feature}
-// @returns Error
+// EditFeature edits geojson feature within geojson layer. 
+// Updates geojson layer in Database
 func (self *Database) EditFeature(datasource_id string, geo_id string, feat *geojson.Feature) error {
 
 	// Get layer from database
@@ -399,7 +390,7 @@ func (self *Database) EditFeature(datasource_id string, geo_id string, feat *geo
 	return err
 }
 
-
+// InsertTimeseriesDatasource inserts timeseries geojson layer to database
 func (self *Database) InsertTimeseriesDatasource(datasource_id string, ddata diff_store.DiffStore) (error) {
 	// save to database
 	enc, err := ddata.Encode()
@@ -414,6 +405,7 @@ func (self *Database) InsertTimeseriesDatasource(datasource_id string, ddata dif
 	return err
 }
 
+// SelectTimeseriesDatasource selects timeseries geojson layer from database
 func (self *Database) SelectTimeseriesDatasource(datasource_id string) (diff_store.DiffStore, error) {
 	var ddata diff_store.DiffStore
 	data, err := self.DB.Select("GeoTimeseriesData", datasource_id)
@@ -421,6 +413,8 @@ func (self *Database) SelectTimeseriesDatasource(datasource_id string) (diff_sto
 	return ddata, err
 }
 
+// UpdateTimeseriesDatasource updates timeseries geojson layer
+// and saves to database.
 func (self *Database) UpdateTimeseriesDatasource(datasource_id string, value []byte) error {
 	// get diffstore record
 	ddata, err := self.SelectTimeseriesDatasource(datasource_id)
