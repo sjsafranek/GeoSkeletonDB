@@ -156,6 +156,28 @@ func (self *Database) GetLayer(datasource_id string) (*geojson.FeatureCollection
 	return geojs, nil
 }
 
+
+// GetLayer returns layer from database
+// @param datasource {string}
+// @returns Geojson
+// @returns Error
+func (self *Database) GetLayers() ([]string, error) {
+	val, err := self.DB.SelectAll(self.Table)
+	if err != nil {
+		return nil, err
+	}
+	// if "" == string(val) {
+	// 	return nil, fmt.Errorf("Datasource not found")
+	// }
+	// // Read to struct
+	// geojs, err := geojson.UnmarshalFeatureCollection(val)
+	// if err != nil {
+	// 	return geojs, err
+	// }
+	return val, nil
+}
+
+
 // DeleteLayer deletes layer from database
 // @param datasource {string}
 // @returns Error
