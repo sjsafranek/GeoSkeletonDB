@@ -43,7 +43,6 @@ func (self GeoTimeseriesDB) getTable() string {
 	if "" == self.Table {
 		return "GeoTimeseriesData"
 	}
-	return string(self.Table)
 }
 
 func (self GeoTimeseriesDB) Insert(datasource_id string, enc []byte) (error) {
@@ -60,6 +59,9 @@ func (self GeoTimeseriesDB) Select(datasource_id string) ([]byte, error) {
 }
 
 func update_timeseries_datasource(datasource_id string, value []byte) {
+
+	GeoTsDB = GeoTimeseriesDB{}
+	GeoTsDB.Init()
 
 	update_value := string(value)
 	var ddata diff_store.DiffStore
