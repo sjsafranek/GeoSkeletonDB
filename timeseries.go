@@ -1,7 +1,5 @@
 package geo_skeleton
 
-import "fmt"
-
 import "github.com/sjsafranek/DiffDB/diff_store"
 import "github.com/sjsafranek/DiffDB/diff_db"
 
@@ -37,7 +35,7 @@ func update_timeseries_datasource(datasource_id string, value []byte) {
 		panic(err)
 	}
 
-	err = diffDb.Save(ddata.Name, enc)
-	fmt.Println(string(datasource_id), ddata.Name, err)
+	ddata.Name = datasource_id
+	err = diffDb.Save(string(ddata.Name), enc)
 
 }
