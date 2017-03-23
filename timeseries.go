@@ -78,7 +78,7 @@ func (self GeoTimeseriesDB) UpdateTimeseriesDatasource(datasource_id string, val
 	return err
 }
 
-func (self *Database) InsertLayer(datasource_id string, geojs *geojson.FeatureCollection) error {
+func (self *GeoTimeseriesDB) InsertLayer(datasource_id string, geojs *geojson.FeatureCollection) error {
 	// convert to bytes
 	value, err := geojs.MarshalJSON()
 	if err != nil {
