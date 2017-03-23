@@ -1,7 +1,5 @@
 package geo_skeleton
 
-import "fmt"
-
 import "github.com/sjsafranek/DiffDB/diff_store"
 import "github.com/sjsafranek/SkeletonDB"
 // import "github.com/sjsafranek/DiffDB/diff_db"
