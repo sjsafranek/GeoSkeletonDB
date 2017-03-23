@@ -1,16 +1,12 @@
 package geo_skeleton
 
 import (
-	"bytes"
-	"compress/flate"
 	crand "crypto/rand"
 	"fmt"
 	"io"
 	"math/rand"
 	"time"
 )
-
-const _letters string = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 
 func init() {
 	rand.Seed(time.Now().UnixNano())
@@ -45,32 +41,3 @@ func NewUUID2() (string, error) {
 	b[6] = b[6]&^0xf0 | 0x40
 	return fmt.Sprintf("%x-%x-%x-%x-%x", b[0:4], b[4:6], b[6:8], b[8:10], b[10:]), nil
 }
-
-// // CompressByte
-// func CompressByte(src []byte) []byte {
-// 	compressedData := new(bytes.Buffer)
-// 	Compress(src, compressedData, 9)
-// 	return compressedData.Bytes()
-// }
-
-// // DecompressByte
-// func DecompressByte(src []byte) []byte {
-// 	compressedData := bytes.NewBuffer(src)
-// 	deCompressedData := new(bytes.Buffer)
-// 	Decompress(compressedData, deCompressedData)
-// 	return deCompressedData.Bytes()
-// }
-
-// // Compress
-// func Compress(src []byte, dest io.Writer, level int) {
-// 	compressor, _ := flate.NewWriter(dest, level)
-// 	compressor.Write(src)
-// 	compressor.Close()
-// }
-
-// // Decompress
-// func Decompress(src io.Reader, dest io.Writer) {
-// 	decompressor := flate.NewReader(src)
-// 	io.Copy(dest, decompressor)
-// 	decompressor.Close()
-// }
