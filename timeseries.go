@@ -31,22 +31,27 @@ func (self GeoTimeseriesDB) Init() {
 	}
 }
 
-func (self GeoTimeseriesDB) getFile() {
+func (self GeoTimeseriesDB) getFile() string {
 	if "" == self.File {
 		return "geo_ts.db"
 	}
 	return self.File
 }
 
-func (self GeoTimeseriesDB) getTable() {
+func (self GeoTimeseriesDB) getTable() string {
 	if "" == self.Table {
 		return "GeoTimeseriesData"
 	}
 	return self.Table
 }
 
-func (self GeoTimeseriesDB) Select(datasource_id) ([]byte, error) {
-	data, err := self.DB.Select(self.getTable, datasource_id)
+func (self GeoTimeseriesDB) Insert(datasource_id string, enc []byte) ([]byte, error) {
+	data, err := self.DB.Insert(self.getTable(), datasource_id, enc)
+	return data, err
+}
+
+func (self GeoTimeseriesDB) Select(datasource_id string) ([]byte, error) {
+	data, err := self.DB.Select(self.getTable(), datasource_id)
 	return data, err
 }
 
@@ -76,6 +81,6 @@ func update_timeseries_datasource(datasource_id string, value []byte) {
 	}
 
 	ddata.Name = datasource_id
-	err = GeoTsDB.Save(string(ddata.Name), enc)
+	err = GeoTsDB.Insert(string(ddata.Name), enc)
 
 }
