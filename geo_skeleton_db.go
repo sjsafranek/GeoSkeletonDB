@@ -10,7 +10,16 @@ import (
 
 import (
 	"github.com/paulmach/go.geojson"
+	"github.com/sjsafranek/DiffDB/diff_store"
 	"github.com/sjsafranek/SkeletonDB"
+)
+
+var (
+	COMMIT_LOG_FILE string = "geo_skeleton_commit.log"
+)
+
+const (
+	DEFAULT_PRECISION        int = 8
 )
 
 // https://gist.github.com/DavidVaini/10308388
@@ -22,12 +31,6 @@ func RoundToPrecision(f float64, places int) float64 {
 	shift := math.Pow(10, float64(places))
 	return Round(f*shift) / shift
 }
-
-// DB application Database
-var (
-	DEFAULT_PRECISION        int = 8
-	COMMIT_LOG_FILE string = "geo_skeleton_commit.log"
-)
 
 func NewGeoSkeletonDB(db_file string) Database {
 	var geoDb = Database{
@@ -140,6 +143,8 @@ func (self *Database) InsertLayer(datasource_id string, geojs *geojson.FeatureCo
 	if err != nil {
 		panic(err)
 	}
+
+	go self.UpdateTimeseriesDatasource(datasource_id, value)
 
 	return err
 }
@@ -386,5 +391,47 @@ func (self *Database) EditFeature(datasource_id string, geo_id string, feat *geo
 	if err != nil {
 		panic(err)
 	}
+	return err
+}
+
+
+func (self GeoTimeseriesDB) InsertTimeseriesDatasource(datasource_id string, enc []byte) (error) {
+	err := self.DB.Insert("GeoTimeseriesData", datasource_id, enc)
+	return err
+}
+
+func (self Database) SelectTimeseriesDatasource(datasource_id string) ([]byte, error) {
+	data, err := self.DB.Select("GeoTimeseriesData", datasource_id)
+	return data, err
+}
+
+func (self Database) UpdateTimeseriesDatasource(datasource_id string, value []byte) error {
+
+	update_value := string(value)
+	var ddata diff_store.DiffStore
+	data, err := self.SelectTimeseriesDatasource(datasource_id)
+	if nil != err {
+		if err.Error() == "Not found" {
+			// create new diffstore if key not found in database
+			ddata = diff_store.NewDiffStore(datasource_id)
+		} else {
+			panic(err)
+		}
+	} else {
+		ddata.Decode(data)
+	}
+
+	// update diffstore
+	ddata.Update(update_value)
+
+	// save to database
+	enc, err := ddata.Encode()
+	if nil != err {
+		panic(err)
+	}
+
+	ddata.Name = datasource_id
+	err = self.InsertTimeseriesDatasource(string(ddata.Name), enc)
+
 	return err
 }
