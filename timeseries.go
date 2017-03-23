@@ -1,5 +1,7 @@
 package geo_skeleton
 
+import "fmt"
+
 import "github.com/sjsafranek/DiffDB/diff_store"
 import "github.com/sjsafranek/DiffDB/diff_db"
 
@@ -11,6 +13,8 @@ func init() {
 }
 
 func update_timeseries_datasource(datasource_id string, value []byte) {
+
+	fmt.Println("TESTINGING !@#$")
 
 	update_value := string(value)
 	var ddata diff_store.DiffStore
