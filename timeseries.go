@@ -8,7 +8,7 @@ var GeoTsDB GeoTimeseriesDB
 
 func init() {
 	GeoTsDB = GeoTimeseriesDB{}
-	GeoTsDB.Init
+	GeoTsDB.Init()
 }
 
 
