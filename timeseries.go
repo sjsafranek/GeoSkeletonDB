@@ -47,7 +47,7 @@ func (self GeoTimeseriesDB) Select(datasource_id string) ([]byte, error) {
 	return data, err
 }
 
-func func (self GeoTimeseriesDB) UpdateTimeseriesDatasource(datasource_id string, value []byte) {
+func (self GeoTimeseriesDB) UpdateTimeseriesDatasource(datasource_id string, value []byte) {
 
 	update_value := string(value)
 	var ddata diff_store.DiffStore
