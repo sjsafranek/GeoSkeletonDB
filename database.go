@@ -386,7 +386,6 @@ func (self *Database) InsertTimeseriesDatasource(datasource_id string, ddata dif
 
 	// not matching ?!?!
 	//ddata.Name = datasource_id
-
 	err = self.DB.Insert("GeoTimeseriesData", datasource_id, enc)
 	return err
 }
