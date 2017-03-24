@@ -1,4 +1,7 @@
+[![GoDoc](https://godoc.org/github.com/sjsafranek/GeoSkeletonDB?status.png)](https://godoc.org/github.com/sjsafranek/GeoSkeletonDB)
+
 [![Go Report Card](https://goreportcard.com/badge/github.com/sjsafranek/skeletondb)](https://goreportcard.com/report/github.com/sjsafranek/geoskeletondb)
+
 [![License MIT License](https://img.shields.io/github/license/mashape/apistatus.svg)](http://sjsafranek.github.io/geoskeletondb/)
 
 # GeoSkeletonDB
