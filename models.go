@@ -1,4 +1,4 @@
-package geo_skeleton
+package geoskeleton
 
 import "github.com/sjsafranek/SkeletonDB"
 

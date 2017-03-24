@@ -1,4 +1,4 @@
-package geo_skeleton
+package geoskeleton
 
 import (
 	"fmt"
