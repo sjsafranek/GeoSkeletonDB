@@ -32,7 +32,8 @@ func NewGeoSkeletonDB(db_file string) Database {
 	return geoDb
 }
 
-// Initialates database
+// Initiates database.
+// Creates required database tables and starts commit log.
 func (self *Database) Init() {
 
 	// start commit log
@@ -62,7 +63,7 @@ func (self *Database) getTable() string {
 	return self.Table
 }
 
-// Get precision for rounding latitude longitude values
+// Get precision for rounding latitude longitude values.
 func (self *Database) getPrecision() int {
 	if 1 > self.Precision {
 		return DEFAULT_PRECISION
@@ -70,7 +71,7 @@ func (self *Database) getPrecision() int {
 	return self.Precision
 }
 
-// Starts Database commit log
+// Starts Database commit log.
 func (self *Database) StartCommitLog() {
 	self.commit_log_queue = make(chan string, 10000)
 	// open file to write database commit log
@@ -92,13 +93,13 @@ func (self *Database) StartCommitLog() {
 	}
 }
 
-// CommitQueueLength returns length of database commit_log_queue
+// CommitQueueLength returns length of database commit_log_queue.
 func (self *Database) CommitQueueLength() int {
 	return len(self.commit_log_queue)
 }
 
-// NewLayer creates new geojson layer
-// Writes new layer to database
+// NewLayer creates new geojson layer.
+// Writes new layer to database.
 // TODO: RENAME TO NewDatasource
 func (self *Database) NewLayer() (string, error) {
 	// create geojson
