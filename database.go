@@ -19,10 +19,10 @@ var (
 )
 
 const (
-	// DEFAULT_PRECISION for storing latitude and longitude as fixed_point
+	// DEFAULT_PRECISION decimal decimal for storing latitude and longitude.
 	DEFAULT_PRECISION      int    = 6 //8
 
-	// DEFAULT_DATABASE_TABLE Database table used to store data
+	// DEFAULT_DATABASE_TABLE Database table used to store data.
 	DEFAULT_DATABASE_TABLE string = "GeoJsonDatasources"
 )
 
