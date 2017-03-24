@@ -406,7 +406,7 @@ func (self *Database) UpdateTimeseriesDatasource(datasource_id string, value []b
 	if nil != err {
 		if err.Error() == "Not found" {
 			// create new diffstore if key not found in database
-			ddata = diff_store.NewDiffStore(datasource_id)
+			ddata = diff_store.NewDiffStore()
 		} else {
 			panic(err)
 		}
