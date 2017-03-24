@@ -14,11 +14,15 @@ import (
 )
 
 var (
+	// COMMIT_LOG_FILE database commit log file path
 	COMMIT_LOG_FILE string = "geo_skeleton_commit.log"
 )
 
 const (
-	DEFAULT_PRECISION      int    = 8
+	// DEFAULT_PRECISION for storing latitude and longitude as fixed_point
+	DEFAULT_PRECISION      int    = 6 //8
+
+	// DEFAULT_DATABASE_TABLE Database table used to store data
 	DEFAULT_DATABASE_TABLE string = "GeoJsonDatasources"
 )
 
