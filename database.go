@@ -35,15 +35,10 @@ func NewGeoSkeletonDB(db_file string) Database {
 // Initialates database
 func (self *Database) Init() {
 
-	self.DB.Init()
-
 	// start commit log
 	go self.StartCommitLog()
 
-	// default table
-	//if "" == self.Table {
-	//	self.Table = DEFAULT_DATABASE_TABLE
-	//}
+	self.DB.Init()
 
 	conn := self.DB.Connect()
 	defer conn.Close()
@@ -245,8 +240,8 @@ func (self *Database) normalizeGeometry(feat *geojson.Feature) (*geojson.Feature
 	return feat, nil
 }
 
-// Normalizes properties within geojson layer using geojson feature
-// Normalizes properties within geojson feature using geojson layers
+// Normalizes properties within geojson layer using geojson feature.
+// Normalizes properties within geojson feature using geojson layers.
 func (self *Database) normalizeProperties(feat *geojson.Feature, featCollection *geojson.FeatureCollection) *geojson.Feature {
 
 	// check if nil map
