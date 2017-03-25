@@ -7,11 +7,9 @@ import (
 	"time"
 )
 
-import (
-	"github.com/paulmach/go.geojson"
-	"github.com/sjsafranek/DiffDB/diff_store"
-	"github.com/sjsafranek/SkeletonDB"
-)
+import "github.com/paulmach/go.geojson"
+import "github.com/sjsafranek/SkeletonDB"
+import "github.com/sjsafranek/DiffStore"
 
 var (
 	// COMMIT_LOG_FILE database commit log file path
@@ -20,7 +18,7 @@ var (
 
 const (
 	// DEFAULT_PRECISION decimal decimal for storing latitude and longitude.
-	DEFAULT_PRECISION      int    = 6 //8
+	DEFAULT_PRECISION int = 6 //8
 
 	// DEFAULT_DATABASE_TABLE Database table used to store data.
 	DEFAULT_DATABASE_TABLE string = "GeoJsonDatasources"
@@ -377,7 +375,7 @@ func (self *Database) EditFeature(datasource_id string, geo_id string, feat *geo
 }
 
 // InsertTimeseriesDatasource inserts timeseries geojson layer to database
-func (self *Database) InsertTimeseriesDatasource(datasource_id string, ddata diff_store.DiffStore) error {
+func (self *Database) InsertTimeseriesDatasource(datasource_id string, ddata diffstore.DiffStore) error {
 	// save to database
 	enc, err := ddata.Encode()
 	if nil != err {
@@ -391,8 +389,8 @@ func (self *Database) InsertTimeseriesDatasource(datasource_id string, ddata dif
 }
 
 // SelectTimeseriesDatasource selects timeseries geojson layer from database
-func (self *Database) SelectTimeseriesDatasource(datasource_id string) (diff_store.DiffStore, error) {
-	var ddata diff_store.DiffStore
+func (self *Database) SelectTimeseriesDatasource(datasource_id string) (diffstore.DiffStore, error) {
+	var ddata diffstore.DiffStore
 	data, err := self.DB.Select("GeoTimeseriesData", datasource_id)
 	ddata.Decode(data)
 	return ddata, err
@@ -406,7 +404,7 @@ func (self *Database) UpdateTimeseriesDatasource(datasource_id string, value []b
 	if nil != err {
 		if err.Error() == "Not found" {
 			// create new diffstore if key not found in database
-			ddata = diff_store.NewDiffStore()
+			ddata = diffstore.NewDiffStore()
 		} else {
 			panic(err)
 		}
