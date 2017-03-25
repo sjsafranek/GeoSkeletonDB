@@ -30,7 +30,7 @@ fmt:
 	@GOPATH=${GPATH} gofmt -s -w *.go
 
 test: fmt get-deps
-	@GOPATH=${GPATH} go test -v -bench=. -test.benchmem
+	@GOPATH=${GPATH} go test -v -cover -bench=. -test.benchmem
 
 scrape:
 	@find src -type d -name '.hg' -or -type d -name '.git' | xargs rm -rf
