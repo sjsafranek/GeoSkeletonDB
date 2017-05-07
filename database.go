@@ -112,7 +112,7 @@ func (self *Database) NewLayer() (string, error) {
 	if err != nil {
 		return "", nil
 	}
-	self.commit_log_queue <- `{"method": "create_datasource", "data": { "datasource": "` + datasource_id + `", "layer": ` + string(value) + `}}`
+	self.commit_log_queue <- `{"method": "create_datasource", "datasource": "` + datasource_id + `", "data": {"layer": ` + string(value) + `}}`
 	// Insert layer into database
 	err = self.DB.Insert(self.getTable(), datasource_id, value)
 	if err != nil {
@@ -169,7 +169,7 @@ func (self *Database) GetLayers() ([]string, error) {
 
 // DeleteLayer deletes geojson layer from database
 func (self *Database) DeleteLayer(datasource_id string) error {
-	self.commit_log_queue <- `{"method": "delete_layer", "data": { "datasource": "` + datasource_id + `"}}`
+	self.commit_log_queue <- `{"method": "delete_layer", "datasource": "` + datasource_id + `"}`
 	err := self.DB.Remove(datasource_id, self.getTable())
 	return err
 }
@@ -314,7 +314,7 @@ func (self *Database) InsertFeature(datasource_id string, feat *geojson.Feature)
 	if err != nil {
 		return err
 	}
-	self.commit_log_queue <- `{"method": "insert_feature", "data": { "datasource": "` + datasource_id + `", "feature": ` + string(value) + `}}`
+	self.commit_log_queue <- `{"method": "insert_feature", datasource": "` + datasource_id + `", "data":{"feature": ` + string(value) + `}}`
 
 	// Add new feature to layer
 	featCollection.AddFeature(feat)
@@ -357,7 +357,7 @@ func (self *Database) EditFeature(datasource_id string, geo_id string, feat *geo
 			if err != nil {
 				return err
 			}
-			self.commit_log_queue <- `{"method": "edit_feature", "data": { "datasource": "` + datasource_id + `", "geo_id": "` + geo_id + `", "feature": ` + string(value) + `}}`
+			self.commit_log_queue <- `{"method": "edit_feature", datasource": "` + datasource_id + `", "geo_id": "` + geo_id + `", "data":{"feature": ` + string(value) + `}}`
 			feature_exists = true
 		}
 	}
