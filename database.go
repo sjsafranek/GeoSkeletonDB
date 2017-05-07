@@ -170,7 +170,7 @@ func (self *Database) GetLayers() ([]string, error) {
 // DeleteLayer deletes geojson layer from database
 func (self *Database) DeleteLayer(datasource_id string) error {
 	self.commit_log_queue <- `{"method": "delete_layer", "datasource": "` + datasource_id + `"}`
-	err := self.DB.Remove(datasource_id, self.getTable())
+	err := self.DB.Remove(self.getTable(), datasource_id)
 	return err
 }
 
