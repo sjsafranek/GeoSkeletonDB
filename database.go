@@ -51,7 +51,7 @@ func (self *Database) Init() {
 		panic(err)
 	}
 
-	err = self.DB.CreateTable(conn, "GeoTimeseriesData")
+	err = self.DB.CreateTable(conn, self.getTable()+"Timeseries")
 	if nil != err {
 		panic(err)
 	}
@@ -384,14 +384,14 @@ func (self *Database) InsertTimeseriesDatasource(datasource_id string, ddata dif
 
 	// not matching ?!?!
 	//ddata.Name = datasource_id
-	err = self.DB.Insert("GeoTimeseriesData", datasource_id, enc)
+	err = self.DB.Insert(self.getTable()+"Timeseries", datasource_id, enc)
 	return err
 }
 
 // SelectTimeseriesDatasource selects timeseries geojson layer from database
 func (self *Database) SelectTimeseriesDatasource(datasource_id string) (diffstore.DiffStore, error) {
 	var ddata diffstore.DiffStore
-	data, err := self.DB.Select("GeoTimeseriesData", datasource_id)
+	data, err := self.DB.Select(self.getTable()+"Timeseries", datasource_id)
 	ddata.Decode(data)
 	return ddata, err
 }
